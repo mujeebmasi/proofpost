@@ -1,0 +1,190 @@
+{
+  "extract_claims": [
+    {
+      "claims": [
+        {
+          "text": "Classification took about 11 minutes per shipment before Tidewater.",
+          "quote": "about eleven minutes per shipment",
+          "passage_id": "call-harbor-finch-3"
+        },
+        {
+          "text": "With Tidewater, classification takes about 2 minutes: the code is suggested, confirmed and filed.",
+          "quote": "About two minutes. The suggested code comes up, we confirm it, and it files.",
+          "passage_id": "call-harbor-finch-4"
+        },
+        {
+          "text": "Tidewater cut filing time by 80 percent.",
+          "quote": "Tidewater cut our filing time by 80 percent overall",
+          "passage_id": "call-harbor-finch-4"
+        },
+        {
+          "text": "Harbor & Finch's six people handled 340 shipments in a week and nobody stayed late.",
+          "quote": "Last week the six of us did 340 shipments and nobody stayed late.",
+          "passage_id": "call-harbor-finch-4"
+        },
+        {
+          "text": "First-pass rejection rate fell from 14% to 4%, which means fewer calls from the port authority.",
+          "quote": "Our first-pass rejection rate was 14 percent. Last quarter it was 4 percent. Fewer rejections means fewer calls from the port authority",
+          "passage_id": "call-harbor-finch-6"
+        },
+        {
+          "text": "Trust came from seeing the three past shipments each suggested code was matched from.",
+          "quote": "it shows the three past shipments each code was matched from, so I can see why it picked it",
+          "passage_id": "call-harbor-finch-8"
+        },
+        {
+          "text": "Tidewater never auto-files; a licensed broker confirms every code.",
+          "quote": "We deliberately do not auto-file. A licensed broker confirms every code before anything is submitted.",
+          "passage_id": "product-notes-4"
+        },
+        {
+          "text": "Nordlys Cargo onboarded in one afternoon versus three weeks of training on the old tool.",
+          "quote": "We onboarded in one afternoon. Our previous tool took three weeks of training before anyone trusted it.",
+          "passage_id": "nordlys-email-2"
+        },
+        {
+          "text": "New hires are useful in their first week because the screen explains itself.",
+          "quote": "new hires are useful in their first week, because the screen explains itself",
+          "passage_id": "nordlys-email-3"
+        }
+      ]
+    }
+  ],
+  "draft": [
+    {
+      "lines": [
+        {
+          "text": "joon told me something on a call last month that i haven't stopped thinking about.",
+          "kind": "hook",
+          "claim_ids": []
+        },
+        {
+          "text": "his team used to spend 11 minutes classifying a shipment. now it's 2.",
+          "kind": "claim",
+          "claim_ids": [
+            "C1",
+            "C2"
+          ]
+        },
+        {
+          "text": "that's an 80% cut in filing time, a real game-changer for his six-person team.",
+          "kind": "claim",
+          "claim_ids": [
+            "C1",
+            "C2"
+          ]
+        },
+        {
+          "text": "first-pass filing errors? basically gone.",
+          "kind": "claim",
+          "claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "text": "i think the boring parts of customs are where software earns its keep.",
+          "kind": "opinion",
+          "claim_ids": []
+        },
+        {
+          "text": "what's the most tedious step in your week?",
+          "kind": "question",
+          "claim_ids": []
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "text": "joon told me something on a call last month that i haven't stopped thinking about.",
+          "kind": "hook",
+          "claim_ids": []
+        },
+        {
+          "text": "his team used to spend about 11 minutes classifying each shipment. now it takes about 2.",
+          "kind": "claim",
+          "claim_ids": [
+            "C1",
+            "C2"
+          ]
+        },
+        {
+          "text": "first-pass rejections went from 14% to 4%. fewer rejections, fewer calls from the port authority.",
+          "kind": "claim",
+          "claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "text": "but speed isn't what won them over. it was seeing the three past shipments behind each suggested code.",
+          "kind": "claim",
+          "claim_ids": [
+            "C5"
+          ]
+        },
+        {
+          "text": "the person who signs should always be able to see why. that's the bit i care about most.",
+          "kind": "opinion",
+          "claim_ids": []
+        },
+        {
+          "text": "we don't auto-file. a licensed broker confirms every code.",
+          "kind": "claim",
+          "claim_ids": [
+            "C6"
+          ]
+        },
+        {
+          "text": "what would you want your software to explain before you trusted it?",
+          "kind": "question",
+          "claim_ids": []
+        }
+      ]
+    }
+  ],
+  "judge_support": [
+    {
+      "verdicts": [
+        {
+          "line": 1,
+          "verdict": "supported",
+          "reason": "The quotes give 11 minutes before and 2 minutes after."
+        },
+        {
+          "line": 2,
+          "verdict": "overstated",
+          "reason": "The quotes never state an 80% reduction or call it a game-changer."
+        },
+        {
+          "line": 3,
+          "verdict": "overstated",
+          "reason": "The quote says rejections fell from 14% to 4%, not that errors are gone."
+        }
+      ]
+    },
+    {
+      "verdicts": [
+        {
+          "line": 1,
+          "verdict": "supported",
+          "reason": "Matches the 11 minutes and 2 minutes in the quotes."
+        },
+        {
+          "line": 2,
+          "verdict": "supported",
+          "reason": "The quote gives 14% falling to 4% and fewer port authority calls."
+        },
+        {
+          "line": 3,
+          "verdict": "supported",
+          "reason": "The quote says the three past shipments are what won the customer over."
+        },
+        {
+          "line": 5,
+          "verdict": "supported",
+          "reason": "The product note says a licensed broker confirms every code."
+        }
+      ]
+    }
+  ]
+}

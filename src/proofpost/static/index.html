@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>proofpost</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --ink: #14181f; --muted: #5b6573; --line: #e2e6ec;
+    --accent: #1f5eff; --ok: #107a45; --ok-bg: #e3f6ec; --warn: #8a5a00; --warn-bg: #fff3d6;
+    --bad: #b3261e; --bad-bg: #fde7e5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1116; --card: #161b22; --ink: #e8ecf1; --muted: #98a3b3; --line: #2a313c;
+      --accent: #6c93ff; --ok: #5fd39a; --ok-bg: #12301f; --warn: #f0c36a; --warn-bg: #33280f;
+      --bad: #ff8d85; --bad-bg: #3a1a18;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { padding: 20px 16px 4px; max-width: 1200px; margin: 0 auto; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; color: var(--muted); max-width: 70ch; }
+  main { max-width: 1200px; margin: 0 auto; padding: 16px; display: grid; gap: 16px;
+         grid-template-columns: 1fr; }
+  @media (min-width: 900px) { main { grid-template-columns: 420px 1fr; align-items: start; } }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  h2 { font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+  label { display: block; font-weight: 600; margin: 12px 0 4px; }
+  input, textarea { width: 100%; font: inherit; color: inherit; background: var(--bg);
+                    border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+  textarea { min-height: 110px; resize: vertical; }
+  .doc { border: 1px solid var(--line); border-radius: 8px; padding: 8px; margin-top: 8px; }
+  .doc textarea { min-height: 80px; margin-top: 6px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  button { font: inherit; border-radius: 8px; border: 1px solid var(--line); background: var(--card);
+           color: var(--ink); padding: 8px 14px; cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  button:disabled { opacity: .55; cursor: progress; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-weight: 600; font-size: 13px; }
+  .ok { background: var(--ok-bg); color: var(--ok); }
+  .review { background: var(--warn-bg); color: var(--warn); }
+  .blocked { background: var(--bad-bg); color: var(--bad); }
+  .post { white-space: pre-wrap; background: var(--bg); border: 1px solid var(--line);
+          border-radius: 8px; padding: 14px; margin: 10px 0; font-size: 16px; }
+  .quote { color: var(--muted); font-size: 13px; margin: 2px 0 0 14px; border-left: 3px solid var(--line); padding-left: 8px; }
+  .line { margin-top: 10px; }
+  .muted { color: var(--muted); }
+  .issue { margin: 4px 0; padding: 6px 10px; border-radius: 6px; font-size: 14px; }
+  .issue.error { background: var(--bad-bg); color: var(--bad); }
+  .issue.warning { background: var(--warn-bg); color: var(--warn); }
+  .err { color: var(--bad); margin-top: 10px; }
+  details { margin-top: 10px; }
+  summary { cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<header>
+  <h1>proofpost</h1>
+  <p>Drafts a founder's post from real evidence, then checks it before a human publishes: every claim traced to a quote, numbers verified, stock phrases flagged, voice measured against the author's own posts.</p>
+</header>
+<main>
+  <section id="inputs">
+    <h2>Inputs</h2>
+    <label for="author">Named author</label>
+    <input id="author" maxlength="80">
+    <label for="goal">Reputation goal</label>
+    <textarea id="goal" style="min-height:70px" maxlength="400"></textarea>
+    <label for="voice">Author's past posts (separate with a line of <code>---</code>)</label>
+    <textarea id="voice" maxlength="30000"></textarea>
+    <label>Evidence documents</label>
+    <div id="docs"></div>
+    <div class="row"><button id="addDoc" type="button">+ Add document</button></div>
+    <div class="row">
+      <button id="load" type="button">Load example</button>
+      <button id="demo" type="button" class="primary">Run demo (free)</button>
+      <button id="live" type="button">Run live</button>
+    </div>
+    <p class="muted" style="font-size:13px">Demo uses scripted model answers but runs the real checks. Live needs an API key on the server.</p>
+    <div id="error" class="err" role="alert"></div>
+  </section>
+  <section id="output" aria-live="polite">
+    <h2>Result</h2>
+    <p class="muted">Load the example and press "Run demo" to see a flawed first draft get caught and repaired.</p>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+
+// Everything from the server is inserted with textContent, never innerHTML:
+// model output and evidence are untrusted text.
+function el(tag, props = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) {
+    if (k === "class") node.className = v; else node[k] = v;
+  }
+  for (const c of children) node.append(c);
+  return node;
+}
+
+function addDoc(name = "", text = "") {
+  const wrap = el("div", { class: "doc" });
+  const n = el("input", { placeholder: "file name, e.g. call-notes.md", value: name, maxLength: 120 });
+  const t = el("textarea", { placeholder: "paste the transcript, notes, or email", value: text, maxLength: 60000 });
+  const rm = el("button", { type: "button", textContent: "Remove" });
+  rm.onclick = () => wrap.remove();
+  wrap.append(n, t, rm);
+  $("docs").append(wrap);
+}
+
+function payload() {
+  const documents = [...document.querySelectorAll(".doc")]
+    .map((d) => ({ name: d.querySelector("input").value || "doc.md", text: d.querySelector("textarea").value }))
+    .filter((d) => d.text.trim());
+  return { author: $("author").value, goal: $("goal").value, voice: $("voice").value, documents };
+}
+
+async function loadExample() {
+  const ex = await (await fetch("/api/example")).json();
+  $("author").value = ex.author; $("goal").value = ex.goal; $("voice").value = ex.voice;
+  $("docs").replaceChildren();
+  ex.documents.forEach((d) => addDoc(d.name, d.text));
+}
+
+function render({ result }) {
+  const f = result.attempts[result.attempts.length - 1];
+  const label = { ok: "Ready for human review", review: "Needs a look", blocked: "Blocked: do not publish" }[f.verdict];
+  const out = $("output");
+  out.replaceChildren(
+    el("h2", { textContent: "Result" }),
+    el("span", { class: "badge " + f.verdict, textContent: label }),
+    el("span", { class: "muted", textContent: `  voice match ${f.voice.score}/100 (${f.voice.confidence} confidence)` }),
+    el("div", { class: "post", textContent: f.text }),
+    el("h2", { textContent: "Evidence trail" }),
+  );
+  const claims = Object.fromEntries(result.claims.map((c) => [c.id, c]));
+  f.draft.lines.forEach((line, i) => {
+    const row = el("div", { class: "line" }, el("div", { textContent: `${i + 1}. ${line.text}` }));
+    if (!line.claim_ids.length) row.append(el("div", { class: "quote", textContent: "no factual claim; the author's own words" }));
+    line.claim_ids.forEach((id) => {
+      const c = claims[id];
+      if (c) row.append(el("div", { class: "quote", textContent: `${id} · ${c.source}: "${c.quote}"` }));
+    });
+    out.append(row);
+  });
+  f.issues.forEach((x) => out.append(el("div", { class: "issue " + x.severity, textContent: x.message })));
+
+  out.append(el("h2", { textContent: "What the checks caught", style: "margin-top:18px" }));
+  result.attempts.forEach((a, n) => {
+    const det = el("details", {}, el("summary", { textContent: `Draft ${n + 1}: ${a.verdict}, ${a.issues.length} issue(s), voice ${a.voice.score}/100` }));
+    if (n < result.attempts.length - 1 || a.issues.length) {
+      det.open = n < result.attempts.length - 1;
+      det.append(el("div", { class: "post", textContent: a.text }));
+      a.issues.forEach((x) => det.append(el("div", { class: "issue " + x.severity, textContent: x.message })));
+    }
+    out.append(det);
+  });
+  if (result.rejected_claims.length) {
+    out.append(el("p", { class: "muted", textContent: `${result.rejected_claims.length} model-proposed claim(s) discarded: their quote is not in the evidence.` }));
+  }
+  out.append(el("p", { class: "muted", textContent: "Nothing is published automatically. A named human approves and posts." }));
+}
+
+async function run(path, btn) {
+  $("error").textContent = "";
+  const buttons = document.querySelectorAll("button");
+  buttons.forEach((b) => (b.disabled = true));
+  try {
+    const res = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload()) });
+    const body = await res.json();
+    if (!res.ok) throw new Error(typeof body.detail === "string" ? body.detail : "Check your inputs and try again.");
+    render(body);
+  } catch (e) {
+    $("error").textContent = e.message;
+  } finally {
+    buttons.forEach((b) => (b.disabled = false));
+  }
+}
+
+$("addDoc").onclick = () => addDoc();
+$("load").onclick = loadExample;
+$("demo").onclick = () => run("/api/demo");
+$("live").onclick = () => run("/api/run");
+loadExample().catch(() => addDoc());
+</script>
+</body>
+</html>
