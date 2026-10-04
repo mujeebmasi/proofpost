@@ -33,7 +33,8 @@ def test_bad_input_gives_clean_422():
 
 
 def test_live_endpoint_without_key_is_503(monkeypatch):
-    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    monkeypatch.delenv("PROOFPOST_API_KEY", raising=False)
     example = client.get("/api/example").json()
     assert client.post("/api/run", json=example).status_code == 503
 

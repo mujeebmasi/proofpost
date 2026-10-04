@@ -8,7 +8,7 @@ from pathlib import Path
 from .bench import run_bench
 from .checks.voice import build_profile, score_voice, split_samples
 from .evidence import EvidenceError, load_dir
-from .llm import LLM, AnthropicLLM, LLMError, ScriptedLLM
+from .llm import LLM, LLMError, OpenAICompatLLM, ScriptedLLM
 from .pipeline import PipelineError, Settings, run
 from .report import render_markdown
 
@@ -30,7 +30,7 @@ def _cmd_run(args: argparse.Namespace) -> int:
             print(f"error: missing --{', --'.join(missing)} (or use --demo)", file=sys.stderr)
             return 2
         evidence_dir, voice_file, goal, author = args.evidence, args.voice, args.goal, args.author
-        llm = AnthropicLLM(args.model)
+        llm = OpenAICompatLLM(args.model)
 
     passages = load_dir(Path(evidence_dir))
     samples = split_samples(Path(voice_file).read_text(encoding="utf-8"))

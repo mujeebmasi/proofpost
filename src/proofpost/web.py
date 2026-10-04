@@ -17,7 +17,7 @@ from pydantic import BaseModel, Field
 from .checks.voice import split_samples
 from .cli import EXAMPLE
 from .evidence import EvidenceError, build_passages
-from .llm import AnthropicLLM, LLMError, ScriptedLLM
+from .llm import LLMError, OpenAICompatLLM, ScriptedLLM, configured_api_key
 from .models import Result
 from .pipeline import PipelineError, run
 from .report import render_markdown
@@ -98,10 +98,14 @@ def demo(req: RunRequest) -> RunResponse:
 
 @app.post("/api/run")
 def live(req: RunRequest, request: Request) -> RunResponse:
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        raise HTTPException(503, "No ANTHROPIC_API_KEY on the server. Use demo mode.")
+    if not configured_api_key():
+        raise HTTPException(503, "No model API key on the server. Use demo mode.")
     _check_rate_limit(request.client.host if request.client else "unknown")
-    return _execute(req, AnthropicLLM())
+    try:
+        llm = OpenAICompatLLM()
+    except LLMError as err:
+        raise HTTPException(503, str(err)) from err
+    return _execute(req, llm)
 
 
 @app.get("/")

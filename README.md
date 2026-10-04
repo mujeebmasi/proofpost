@@ -21,7 +21,7 @@ In demo mode the **model's answers are scripted** (`examples/tidewater/replay.js
 ## Run it live
 
 ```bash
-export ANTHROPIC_API_KEY=...        # PowerShell: $env:ANTHROPIC_API_KEY="..."
+export DEEPSEEK_API_KEY=...        # PowerShell: $env:DEEPSEEK_API_KEY="..."
 proofpost run --evidence ./my-docs --voice ./my-posts.md \
   --author "Maya Lindqvist" --goal "Be known for X among Y"
 ```
@@ -29,7 +29,7 @@ proofpost run --evidence ./my-docs --voice ./my-posts.md \
 - `--evidence`: a folder of `.md` / `.txt` files (call transcripts, customer emails, release notes).
 - `--voice`: the author's past posts in one file, separated by lines containing only `---` (5+ recommended).
 - Exit code is `1` if the final draft is **blocked**, so it can gate a script or CI job.
-- Default model is `claude-opus-5-5`; override with `PROOFPOST_MODEL` or `--model`.
+- Default provider is DeepSeek (`deepseek-flash`). Any OpenAI-compatible API works by setting `PROOFPOST_BASE_URL`, `PROOFPOST_MODEL` and `PROOFPOST_API_KEY` (OpenRouter, Groq, Together, or a local Ollama/vLLM server). Model names change; check your provider's docs.
 
 ## How it works
 
@@ -102,7 +102,7 @@ src/proofpost/
   report.py        human-readable output
   web.py, static/  FastAPI app + single-page UI
   cli.py, bench.py
-tests/             52 tests, no network, no API key needed
+tests/             56 tests, no network, no API key needed
 examples/tidewater a fictional company: evidence, past posts, scripted model answers
 evals/data         posts used by the benchmark
 docs/DESIGN.md     decisions and trade-offs
@@ -112,4 +112,4 @@ All names in `examples/` (Tidewater, Maya Lindqvist, Harbor & Finch, ...) are fi
 
 ## Status
 
-Tests, lint, the benchmark and the offline demo pass locally (52 tests) and are wired into a GitHub Actions workflow that has not run yet. The live Anthropic call path (`AnthropicLLM`) is covered by unit tests against a stand-in client; it has not yet been exercised against the real API in this repo's history, so the first live run is where prompt tuning will happen.
+Tests, lint, the benchmark and the offline demo pass locally (56 tests) and are wired into a GitHub Actions workflow that has not run yet. The live call path (`OpenAICompatLLM`) is covered by unit tests against a stand-in client, including empty and malformed JSON retries. It has not yet been run against a real provider, so the first live run is where prompt tuning will happen. Expect to adjust the prompts: models differ in how well they follow the line-count and no-new-numbers rules.

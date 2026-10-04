@@ -9,7 +9,7 @@ description = "Draft founder posts where every claim is traced to evidence, then
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "anthropic>=1.0,<2",
+    "openai>=1.50",
     "pydantic>=2.7,<3",
     "fastapi>=0.115,<1",
     "uvicorn>=0.30,<1",

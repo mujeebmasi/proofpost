@@ -25,7 +25,7 @@ On failure the exact issues go back to the model with the numbered previous draf
 There is no publishing code. Each line in the output carries its quote and source file so a reviewer can verify in seconds instead of re-reading transcripts.
 
 **7. Model access is one file behind one method.**
-`LLM.structured(step, system, user, schema)` returns a validated pydantic object (via `messages.parse`). Refusals, truncation, and unparseable output become `LLMError`. `ScriptedLLM` implements the same method, which is why the demo and 52 tests run offline and the real checks still execute.
+`LLM.structured(step, system, user, schema)` returns a validated pydantic object. The provider is anything speaking the OpenAI chat format (DeepSeek by default), chosen by environment variables. Most such providers offer "JSON mode", which guarantees valid JSON but not *our* shape, so the schema is put in the prompt and pydantic validates the reply; an empty or malformed answer is retried up to 3 times with the problem explained. Truncation and filtered answers become `LLMError`. `ScriptedLLM` implements the same method, which is why the demo and the tests run offline and the real checks still execute.
 
 **8. Untrusted evidence.**
 Transcripts and emails may contain instructions. Prompts fence evidence in tags and state it is data. More importantly, the architecture does not depend on the model resisting: a claim must be a verbatim quote, so injected text can't mint facts, and the judge only ever compares a line against quotes.
