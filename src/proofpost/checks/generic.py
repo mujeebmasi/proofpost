@@ -18,6 +18,7 @@ GENERIC_PATTERNS: list[tuple[str, str]] = [
     ("here's the thing", r"\bhere'?s the (thing|kicker|truth|secret)\b"),
     ("let that sink in", r"\blet that sink in\b"),
     ("it's not just X, it's Y", r"\bit'?s not (just|only|about)\b[^.\n]{1,60}(,|;|—|-)\s*it'?s\b"),
+    ("not X, it's Y", r"\b(that|it|this)('?s| is) not (a |an |the |just |only )?[^.\n,]{1,40},\s*(it|that)('?s| is)\b"),
     ("seamless", r"\bseamless(ly)?\b"),
     ("cutting-edge", r"\bcutting[- ]edge\b"),
     ("revolutionize", r"\brevolutioni[sz]\w*"),

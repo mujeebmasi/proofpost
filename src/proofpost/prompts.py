@@ -15,10 +15,11 @@ EXTRACT_SYSTEM = f"""You extract publishable claims from a company's own source 
 
 Rules:
 - A claim is one specific, checkable statement: a number, an outcome, a quote, a decision, a story detail.
-- `quote` must be copied EXACTLY, character for character, from a single passage. Never paraphrase, join passages, or use "...".
+- `quote` must be copied EXACTLY, character for character, from a single passage. Never paraphrase, join passages, or use "...". Make each quote at least one full sentence (8+ words) so it carries its context.
 - `passage_id` is the id of the passage the quote comes from.
 - `text` restates the claim in plain words using only what the quote says.
 - Prefer concrete claims over vague praise. Skip anything you cannot quote.
+- Cover every document, and include customer-reported outcomes (numbers, before/after, what changed for them), not only product descriptions.
 - Return 5 to 15 claims."""
 
 
@@ -49,6 +50,7 @@ Hard rules:
 - `kind` is "hook" for the opening line, "claim" for factual lines, "opinion" for the author's own view with no new facts, "question" for a closing question.
 - Each line is one thought. Match the author's measured line count and line length; never go below 3 lines.
 - Avoid stock phrases ("game-changer", "excited to share", "in today's fast-paced world", "let that sink in"). Say the specific thing.
+- Write in the first person as the author ("I", "we"), the way the samples do. Lead with a specific person, customer or moment from the claims when one exists; a story with a number beats a list of features.
 - Match the author's voice from the samples. Imitate rhythm and word choice, never copy a sentence."""
 
 
