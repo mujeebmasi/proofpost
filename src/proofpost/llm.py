@@ -34,6 +34,24 @@ class LLM(Protocol):
         ...
 
 
+def load_env_file(path: Path) -> None:
+    """Read KEY=VALUE lines from a .env file into os.environ.
+
+    A variable that is already set in the real environment wins, so a shell export can
+    override the file. Missing file is fine.
+    """
+    if not path.is_file():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        value = value.strip().strip("\"'")
+        if value:
+            os.environ.setdefault(key.strip(), value)
+
+
 def configured_api_key() -> str | None:
     """PROOFPOST_API_KEY wins; DEEPSEEK_API_KEY is the convenient default."""
     return os.environ.get("PROOFPOST_API_KEY") or os.environ.get("DEEPSEEK_API_KEY")

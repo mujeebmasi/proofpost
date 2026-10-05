@@ -8,7 +8,7 @@ from pathlib import Path
 from .bench import run_bench
 from .checks.voice import build_profile, score_voice, split_samples
 from .evidence import EvidenceError, load_dir
-from .llm import LLM, LLMError, OpenAICompatLLM, ScriptedLLM
+from .llm import LLM, LLMError, OpenAICompatLLM, ScriptedLLM, load_env_file
 from .pipeline import PipelineError, Settings, run
 from .report import render_markdown
 
@@ -103,6 +103,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(message)s")
+    load_env_file(Path.cwd() / ".env")
+    load_env_file(REPO_ROOT / ".env")
     args = build_parser().parse_args(argv)
     try:
         return args.func(args)

@@ -80,3 +80,19 @@ def test_provider_comes_from_environment(monkeypatch):
     llm = OpenAICompatLLM(api_key="x")
     assert llm.model == "llama3"
     assert str(llm.client.base_url).startswith("http://localhost:11434/v1")
+
+
+def test_env_file_is_loaded_but_never_overrides_the_real_environment(tmp_path, monkeypatch):
+    from proofpost.llm import load_env_file
+
+    env = tmp_path / ".env"
+    env.write_text('# comment\nDEEPSEEK_API_KEY="from-file"\nPROOFPOST_MODEL=\nOTHER=1\n', encoding="utf-8")
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    monkeypatch.setenv("OTHER", "shell")
+    load_env_file(env)
+    import os
+
+    assert os.environ["DEEPSEEK_API_KEY"] == "from-file"
+    assert os.environ["OTHER"] == "shell"
+    load_env_file(tmp_path / "missing.env")  # no error
+    monkeypatch.delenv("DEEPSEEK_API_KEY")
