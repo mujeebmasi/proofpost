@@ -102,7 +102,7 @@ src/proofpost/
   report.py        human-readable output
   web.py, static/  FastAPI app + single-page UI
   cli.py, bench.py
-tests/             56 tests, no network, no API key needed
+tests/             59 tests, no network, no API key needed
 examples/tidewater a fictional company: evidence, past posts, scripted model answers
 evals/data         posts used by the benchmark
 docs/DESIGN.md     decisions and trade-offs
@@ -112,4 +112,4 @@ All names in `examples/` (Tidewater, Maya Lindqvist, Harbor & Finch, ...) are fi
 
 ## Status
 
-Tests, lint, the benchmark and the offline demo pass locally (56 tests) and are wired into a GitHub Actions workflow that has not run yet. The live call path (`OpenAICompatLLM`) has been run end to end against DeepSeek on the bundled example (about 20 seconds per run). In those runs the checks caught a draft inventing a product version label and another attributing a quote to the wrong person, and the repaired drafts passed. That is two runs on one fictional example, not an evaluation: expect to keep tuning prompts on real evidence, and models differ in how well they follow the line-count and no-new-numbers rules.
+Tests, lint, the benchmark and the offline demo pass locally (59 tests) and are wired into a GitHub Actions workflow that has not run yet. The live call path (`OpenAICompatLLM`) has been run end to end against DeepSeek on the bundled example (about 20 seconds per run). In those runs the checks caught a draft inventing a product version label and another attributing a quote to the wrong person, and the repaired drafts passed. That is two runs on one fictional example, not an evaluation: expect to keep tuning prompts on real evidence, and models differ in how well they follow the line-count and no-new-numbers rules.
